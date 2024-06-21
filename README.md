@@ -28,7 +28,7 @@ sudo ./custom -interface=eth1 -spoofedMAC=DE:AD:BE:EF:11:12 -spoofedIP=200.201.2
 Must be run as administrator
 
 ```powershell
-.\custom.exe -interface "\Device\NPF_{94E6ABD7-B890-4E28-B454-6613FE5D2136}" -spoofMAC DE:AD:BE:EF:11:12 -spoofedIP 200.201.202.144
+.\custom.exe -interface "\Device\NPF_{94E6ABD7-B890-4E28-B454-6613FE5D2136}" -spoofedMAC DE:AD:BE:EF:11:12 -spoofedIP 200.201.202.144
 ```
 
 ## Display arp table for given IP root using powershell
@@ -46,3 +46,7 @@ while ($True)
     Start-Sleep -Seconds 1
 }
 ```
+
+## Author
+
+SOARES Lucas
