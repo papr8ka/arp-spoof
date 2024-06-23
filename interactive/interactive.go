@@ -5,7 +5,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/papr8ka/arp-spoof/arp"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
@@ -193,6 +192,10 @@ func (i *interactive) Update() error {
 			i.editedInput = inputs
 		}
 
+		if ebiten.IsKeyPressed(ebiten.KeyDelete) {
+			i.editedText = ""
+		}
+
 		if ebiten.IsKeyPressed(ebiten.KeyEnter) || ebiten.IsKeyPressed(ebiten.KeyKPEnter) {
 			i.setInputValue(i.editedInput, i.editedText)
 			i.editedInput = inputs
@@ -237,8 +240,6 @@ func (i *interactive) Draw(screen *ebiten.Image) {
 				PrimaryAlign: text.AlignCenter,
 			},
 		})
-
-		vector.StrokeRect(screen, float32(e.rectangle.Min.X), float32(e.rectangle.Min.Y), float32(e.rectangle.Dx()), float32(e.rectangle.Dy()), 2, colornames.Green, false)
 	}
 }
 

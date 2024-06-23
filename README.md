@@ -1,15 +1,18 @@
 # ARP Spoofing (but not like the others)
 
+![img](.doc/example.gif)
+
 ## Usage
 
-| Parameter      | Description                                       |
-|----------------|---------------------------------------------------|
-| spoofedMAC     | New MAC address to be set                         |
-| spoofedIP      | Ip entry in the ARP table of victim to be altered |
-| targetMAC      | MAC address of the victim to send the attack to   |
-| interface      | Interface to use to send attack from              |
-| listInterfaces | Will list interfaces of the machine               |
-| help           | Displays help on how to use this                  |
+| Parameter      | Description                                                                   |
+|----------------|-------------------------------------------------------------------------------|
+| spoofedMAC     | New MAC address to be set                                                     |
+| spoofedIP      | Ip entry in the ARP table of victim to be altered                             |
+| targetMAC      | MAC address of the victim to send the attack to                               |
+| interface      | Interface to use to send attack from                                          |
+| listInterfaces | Will list interfaces of the machine                                           |
+| interactive    | Run this tool in interactive mode, provide quick way to edit current settings |
+| help           | Displays help on how to use this                                              |
 
 ### Example
 
@@ -30,6 +33,11 @@ Must be run as administrator
 ```powershell
 .\custom.exe -interface "\Device\NPF_{94E6ABD7-B890-4E28-B454-6613FE5D2136}" -spoofedMAC DE:AD:BE:EF:11:12 -spoofedIP 200.201.202.144
 ```
+
+## Interactive mode
+
+In interactive mode, you can edit the value by clicking it, or simply increase/decrease it, by overing and using the mouse
+wheel for a quick editing.
 
 ## Display arp table for given IP root using powershell
 
