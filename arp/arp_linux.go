@@ -1,10 +1,10 @@
 package arp
 
 import (
-	"custom/logger"
-	"custom/logger/label"
 	"fmt"
 	marp "github.com/mdlayher/arp"
+	"github.com/papr8ka/arp-spoof/logger"
+	"github.com/papr8ka/arp-spoof/logger/label"
 	"go.uber.org/zap"
 	"net"
 	"sync"
@@ -53,6 +53,24 @@ func (arp *implementation) Close() {
 
 }
 
+func (arp *implementation) GetSpoofedIP() string {
+	arp.RLock()
+	defer arp.RUnlock()
+	return arp.spoofedIPString
+}
+
+func (arp *implementation) GetSpoofedMAC() string {
+	arp.RLock()
+	defer arp.RUnlock()
+	return arp.spoofedMACString
+}
+
+func (arp *implementation) GetTargetMAC() string {
+	arp.RLock()
+	defer arp.RUnlock()
+	return arp.targetMACString
+}
+
 func (arp *implementation) SetParameter(targetMACString string,
 	spoofedIPString string,
 	spoofedMACString string) error {
@@ -60,7 +78,7 @@ func (arp *implementation) SetParameter(targetMACString string,
 	defer arp.Unlock()
 
 	if targetMAC, err := net.ParseMAC(targetMACString); err == nil {
-		if spoofedIP := net.ParseIP(spoofedIPString); spoofedIP == nil {
+		if spoofedIP := net.ParseIP(spoofedIPString); spoofedIP != nil {
 			if spoofMAC, err := net.ParseMAC(spoofedMACString); err == nil {
 				arp.targetMACString = targetMACString
 				arp.targetMAC = targetMAC
@@ -124,9 +142,17 @@ func (arp *implementation) ListInterfaces() {
 	interfaces, _ := net.Interfaces()
 	for _, currentInterface := range interfaces {
 		addressesList, _ := currentInterface.Addrs()
-		fmt.Print("\"", currentInterface.Name, "\" with MAC ", currentInterface.HardwareAddr, " has IP addresses ")
-		for _, address := range addressesList {
-			fmt.Print(address, ", ")
+		fmt.Print("\"", currentInterface.Name, "\" with MAC \"", currentInterface.HardwareAddr, "\"")
+		if len(addressesList) > 0 {
+			fmt.Print(" has IP addresses ")
+			for addressIndex, address := range addressesList {
+				fmt.Print("\"", address, "\"")
+				if addressIndex < len(addressesList)-1 {
+					fmt.Print(", ")
+				}
+			}
+		} else {
+			fmt.Print(" has no IP addresses")
 		}
 		fmt.Println()
 	}

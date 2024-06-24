@@ -6,6 +6,7 @@ import (
 	"github.com/papr8ka/arp-spoof/arp"
 	"github.com/papr8ka/arp-spoof/interactive"
 	"github.com/papr8ka/arp-spoof/logger"
+	"github.com/papr8ka/arp-spoof/logger/label"
 	"github.com/papr8ka/arp-spoof/token"
 	"go.uber.org/zap"
 	"os"
@@ -43,7 +44,7 @@ func main() {
 	}
 
 	if !token.IsAdmin() {
-		logger.Logger.Error("/!\\ You have to run this as administrator /!\\")
+		logger.Logger.Error("/!\\ You have to run this as administrator/root /!\\")
 		os.Exit(1)
 	}
 
@@ -53,7 +54,13 @@ func main() {
 		if *listInterfaces {
 			instance.ListInterfaces()
 		} else {
-			_ = instance.SetParameter(*targetMACString, *spoofedIPString, *spoofMACString)
+			if err = instance.SetParameter(*targetMACString, *spoofedIPString, *spoofMACString); err != nil {
+				logger.Logger.Error("invalid parameters",
+					zap.Error(err),
+					zap.String(label.TargetMAC, *targetMACString),
+					zap.String(label.SpoofedIP, *spoofedIPString),
+					zap.String(label.SpoofedMAC, *spoofMACString))
+			}
 
 			isRunning := true
 
@@ -66,6 +73,7 @@ func main() {
 			}()
 
 			if *isInteractive {
+				ebiten.SetWindowTitle("ARP SPOOF - " + *interfaceString)
 				ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 				if err := ebiten.RunGame(interactive.New(instance)); err != nil {
 					logger.Logger.Fatal("could not start interactive window",

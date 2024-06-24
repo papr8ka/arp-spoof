@@ -1,6 +1,9 @@
 package token
 
+import (
+	"os"
+)
+
 func IsAdmin() bool {
-	// TODO
-	return true
+	return os.Geteuid() == 0
 }
