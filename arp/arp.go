@@ -3,8 +3,6 @@ package arp
 type Arp interface {
 	Close()
 
-	ListInterfaces()
-
 	GetSpoofedIP() string
 	GetSpoofedMAC() string
 	GetTargetMAC() string

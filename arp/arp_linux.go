@@ -138,7 +138,7 @@ func (arp *implementation) Do() error {
 
 }
 
-func (arp *implementation) ListInterfaces() {
+func ListInterfaces() {
 	interfaces, _ := net.Interfaces()
 	for _, currentInterface := range interfaces {
 		addressesList, _ := currentInterface.Addrs()

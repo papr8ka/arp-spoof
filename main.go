@@ -48,12 +48,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	if instance, err := arp.New(*interfaceString); err == nil {
-		defer instance.Close()
+	if *listInterfaces {
+		arp.ListInterfaces()
+		os.Exit(0)
+	} else {
+		if instance, err := arp.New(*interfaceString); err == nil {
+			defer instance.Close()
 
-		if *listInterfaces {
-			instance.ListInterfaces()
-		} else {
 			if err = instance.SetParameter(*targetMACString, *spoofedIPString, *spoofMACString); err != nil {
 				logger.Logger.Error("invalid parameters",
 					zap.Error(err),
@@ -75,6 +76,7 @@ func main() {
 			if *isInteractive {
 				ebiten.SetWindowTitle("ARP SPOOF - " + *interfaceString)
 				ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+				ebiten.SetWindowSize(1024, 640)
 				if err := ebiten.RunGame(interactive.New(instance)); err != nil {
 					logger.Logger.Fatal("could not start interactive window",
 						zap.Error(err))
@@ -84,9 +86,9 @@ func main() {
 					time.Sleep(time.Second)
 				}
 			}
+		} else {
+			logger.Logger.Fatal("could not create arp instance",
+				zap.Error(err))
 		}
-	} else {
-		logger.Logger.Fatal("could not create arp instance",
-			zap.Error(err))
 	}
 }

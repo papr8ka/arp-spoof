@@ -145,7 +145,7 @@ func (arp *implementation) Do() error {
 	}
 }
 
-func (arp *implementation) ListInterfaces() {
+func ListInterfaces() {
 	interfaces, _ := pcap.FindAllDevs()
 	for _, currentInterface := range interfaces {
 		fmt.Print("\"", currentInterface.Name, "\" with human readable name ", currentInterface.Description, " has IP addresses ")

@@ -33,7 +33,7 @@ var (
 
 const (
 	rectangleHeight        = 50
-	rectangleVerticalSpace = 80
+	rectangleVerticalSpace = 30
 
 	textZoom = 4
 )
@@ -104,38 +104,39 @@ func (i *interactive) setInputValue(input input, newValue string) {
 }
 
 const (
-	MACMaximum = 0xFFF7FFFFFFFF
+	MACMaximum = int64(0xFFF7FFFFFFFF)
 )
+
+func joinByteArrayIntoData(v []byte, count int) (result int64) {
+	for index := 0; index < count; index++ {
+		result |= int64(v[index]) << ((count - index - 1) * 8)
+	}
+	return
+}
+
+func cutDataIntoByteArray(v int64, count int) []byte {
+	result := make([]byte, count)
+	for index := 0; index < count; index++ {
+		result[index] = byte((v >> ((count - index - 1) * 8)) & 0xFF)
+	}
+	return result
+}
 
 func (i *interactive) increaseDecreaseIP(value string, delta int) string {
 	if ip := net.ParseIP(value); ip == nil {
 		return value
 	} else {
-		ip = ip.To4()
-		v := (int(ip[0])<<24 | int(ip[1])<<16 | int(ip[2])<<8 | int(ip[3])) + delta
-		ip[0] = byte((v >> 24) & 0xFF)
-		ip[1] = byte((v >> 16) & 0xFF)
-		ip[2] = byte((v >> 8) & 0xFF)
-		ip[3] = byte(v & 0xFF)
-		return ip.String()
+		return net.IP(cutDataIntoByteArray(joinByteArrayIntoData(ip.To4(), 4)+int64(delta), 4)).String()
 	}
 }
 
 func (i *interactive) increaseDecreaseMAC(value string, delta int) string {
 	if mac, err := net.ParseMAC(value); err == nil {
-		v := ((int(mac[0])<<40 | int(mac[1])<<32 | int(mac[2])<<24 | int(mac[3])<<16 | int(mac[4])<<8 | int(mac[5])) + delta) % MACMaximum
+		v := (joinByteArrayIntoData(mac, 6) + int64(delta)) % MACMaximum
 		if v < 0 {
 			v = MACMaximum
 		}
-
-		mac[0] = byte((v >> 40) & 0xFF)
-		mac[1] = byte((v >> 32) & 0xFF)
-		mac[2] = byte((v >> 24) & 0xFF)
-		mac[3] = byte((v >> 16) & 0xFF)
-		mac[4] = byte((v >> 8) & 0xFF)
-		mac[5] = byte(v & 0xFF)
-
-		return mac.String()
+		return net.HardwareAddr(cutDataIntoByteArray(v, 6)).String()
 	} else {
 		return value
 	}
@@ -168,7 +169,7 @@ func (i *interactive) Update() error {
 		width, _ := text.Measure(e.text, i.font, 0)
 		width *= textZoom
 		e.rectangle = image.Rect(windowWidth/2-int(width)/2, verticalBase, windowWidth/2-int(width)/2+int(width), verticalBase+rectangleHeight)
-		verticalBase += rectangleVerticalSpace
+		verticalBase += rectangleVerticalSpace + rectangleHeight
 
 		e.overed = e.rectangle.Overlaps(image.Rect(cursorX, cursorY, cursorX+1, cursorY+1))
 	}
