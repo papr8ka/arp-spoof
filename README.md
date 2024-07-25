@@ -17,7 +17,7 @@
 ### Example
 
 In the commands below, our machine will send packets using interface `eth1` on Linux,
-`\Device\NPF_{94E6ABD7-B890-4E28-B454-6613FE5D2136}` on Windows to the machine with MAC address `00:15:5D:09:B8:34`,
+`\Device\NPF_{94E6ABD7-B890-4E28-B454-6613FE5D2136}` on Windows to the machine with NIC that has MAC address `00:15:5D:09:B8:34`,
 that will receive packets telling it machine with IP `200.201.202.144` has MAC address `DE:AD:BE:EF:11:12`.
 
 #### Linux
